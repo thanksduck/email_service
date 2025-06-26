@@ -1,6 +1,6 @@
 # Use a specific Go version for consistency, e.g., golang:1.22-alpine
 # Build stage
-FROM golang:1.22-alpine AS builder
+FROM golang:alpine AS builder
 
 WORKDIR /app
 
