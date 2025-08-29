@@ -25,6 +25,7 @@ type SendEmailRequest struct {
 	Template        string             `json:"template"` // The template content itself
 	PlaceholderData []PlaceholderValue `json:"placeholders"`
 	// Optional SMTP credentials
+	SenderEmail  string `json:"sender_email,omitempty"`
 	SMTPServer   string `json:"smtp_server,omitempty"`
 	SMTPPort     int    `json:"smtp_port,omitempty"`
 	SMTPUsername string `json:"smtp_username,omitempty"`
@@ -165,9 +166,9 @@ func (es *EmailService) HandlePostSendEmail(w http.ResponseWriter, r *http.Reque
 		SMTPServer:   req.SMTPServer,
 		SMTPPort:     req.SMTPPort,
 		SMTPUsername: req.SMTPUsername,
+		SenderEmail:  req.SenderEmail,
 		SMTPPassword: req.SMTPPassword,
 	}
-
 	if err := es.Service.QueueEmail(emailData); err != nil {
 		http.Error(w, fmt.Sprintf("Failed to queue email: %v", err), http.StatusInternalServerError)
 		return
