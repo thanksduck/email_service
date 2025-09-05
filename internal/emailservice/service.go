@@ -22,6 +22,7 @@ type EmailData struct {
 	SMTPServer   string // Optional: for dynamic SMTP credentials
 	SMTPPort     int    // Optional: for dynamic SMTP credentials
 	SMTPUsername string // Optional: for dynamic SMTP credentials
+	SenderEmail  string // Optional: for dynamic SMTP credentials
 	SMTPPassword string // Optional: for dynamic SMTP credentials
 	UseSSL       bool   // Optional: force SSL/TLS usage
 	UseTLS       bool   // Optional: force STARTTLS usage
@@ -144,6 +145,13 @@ func (s *EmailService) getEffectiveSMTPUser(data EmailData) string {
 	return s.smtpUser
 }
 
+func (s *EmailService) getEffectiveSenderEmail(data EmailData) string {
+	if data.SenderEmail != "" {
+		return data.SenderEmail
+	}
+	return s.senderEmail
+}
+
 func (s *EmailService) getEffectiveSMTPPass(data EmailData) string {
 	if data.SMTPPassword != "" {
 		return data.SMTPPassword
@@ -182,6 +190,7 @@ func (s *EmailService) sendEmail(data EmailData) error {
 	smtpHost := s.getEffectiveSMTPHost(data)
 	smtpPort := s.getEffectiveSMTPPort(data)
 	smtpUser := s.getEffectiveSMTPUser(data)
+	senderEmail := s.getEffectiveSenderEmail(data)
 	smtpPass := s.getEffectiveSMTPPass(data)
 	useSSL := s.getEffectiveSSL(data)
 	useTLS := s.getEffectiveTLS(data)
@@ -189,7 +198,6 @@ func (s *EmailService) sendEmail(data EmailData) error {
 	addr := fmt.Sprintf("%s:%s", smtpHost, smtpPort)
 
 	// Determine sender email
-	senderEmail := s.senderEmail
 	if senderEmail == "" && smtpUser != "" {
 		senderEmail = smtpUser
 	}
